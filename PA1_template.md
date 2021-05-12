@@ -117,15 +117,29 @@ sum(is.na(data$steps))
 ## [1] 2304
 ```
 
-We fill in these missing values by simply setting them to 0.
+We fill in these missing values by using the average steps for the interval. We use the `head()` function to check there are no missing values.
 
 
 ```r
-na_removed <- data %>%
-        mutate(steps = replace(steps, is.na(steps), 0))
+na_removed <- data # Copy the dataset to remove NA values
+for (i in steps_per_interval$interval) {
+        na_removed[na_removed$interval == i & is.na(na_removed$steps), ]$steps <- 
+                steps_per_interval$steps[steps_per_interval$interval == i]
+}
+head(na_removed)
 ```
 
-Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to 0. First we create the summarised data set like we did before.
+```
+##       steps       date interval
+## 1 1.7169811 2012-10-01        0
+## 2 0.3396226 2012-10-01        5
+## 3 0.1320755 2012-10-01       10
+## 4 0.1509434 2012-10-01       15
+## 5 0.0754717 2012-10-01       20
+## 6 2.0943396 2012-10-01       25
+```
+
+Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interva;. First we create the summarised data set like we did before.
 
 
 ```r
@@ -138,7 +152,7 @@ And we plot a histogram like we did before.
 
 
 ```r
-hist(steps_per_day$steps, col="cyan", xlab="Steps", main="Histogram of Steps Per Day with missing values set to 0")
+hist(steps_per_day$steps, col="cyan", xlab="Steps", main="Histogram of Steps Per Day with missing values imputed")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
@@ -151,7 +165,7 @@ mean(steps_per_day$steps)
 ```
 
 ```
-## [1] 9354.23
+## [1] 10766.19
 ```
 
 ```r
@@ -159,10 +173,10 @@ median(steps_per_day$steps)
 ```
 
 ```
-## [1] 10395
+## [1] 10766.19
 ```
 
-We can see there has been no change to the Histogram or the mean and median values due to us setting these missing values to 0.
+We can see there has been a slight change to the histogram, mean and median.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
