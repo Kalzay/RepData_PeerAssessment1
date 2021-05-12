@@ -228,7 +228,7 @@ head(na_removed)</code></pre>
 ## 4 0.1509434 2012-10-01       15
 ## 5 0.0754717 2012-10-01       20
 ## 6 2.0943396 2012-10-01       25</code></pre>
-<p>Once again, let’s take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interva;. First we create the summarised data set like we did before.</p>
+<p>Once again, let’s take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interval. First we create the summarised data set like we did before.</p>
 <pre class="r"><code>steps_per_day &lt;- na_removed %&gt;%
         group_by(date) %&gt;%
         summarise(steps = sum(steps, na.rm = TRUE))</code></pre>

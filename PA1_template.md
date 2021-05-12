@@ -139,7 +139,7 @@ head(na_removed)
 ## 6 2.0943396 2012-10-01       25
 ```
 
-Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interva;. First we create the summarised data set like we did before.
+Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interval. First we create the summarised data set like we did before.
 
 
 ```r

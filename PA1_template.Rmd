@@ -98,7 +98,7 @@ for (i in steps_per_interval$interval) {
 head(na_removed)
 ```
 
-Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interva;. First we create the summarised data set like we did before.
+Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to the mean for that interval. First we create the summarised data set like we did before.
 
 ```{r summarise sum of steps per day with NA removed}
 steps_per_day <- na_removed %>%
