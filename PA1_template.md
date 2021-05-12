@@ -10,7 +10,8 @@ output:
 
 We check to see if the `activity.csv` file exists already and if not we unzip the `activity.zip` file. We read in the data, making sure we include the header, and set the NA strings to be "NA". Finally, we convert the date column to be of the `date` class.
 
-```{r load_data}
+
+```r
 if (!file.exists('activity.csv')){
         unzip("activity.zip", exdir = getwd())
 }
@@ -25,12 +26,11 @@ data$date <- as.Date(as.character(data$date), "%Y-%m-%d")
 
 First, we summarise the data to take the sum of steps for each day using the `dplyr` package - we hide the loading in of `dplyr` as we do not need to see the result of this.
 
-```{r load_dplyr, include='false'}
-library(dplyr)
-```
 
 
-```{r summarise sum of steps per day}
+
+
+```r
 steps_per_day <- data %>%
         group_by(date) %>%
         summarise(steps = sum(steps, na.rm = TRUE))
@@ -38,15 +38,30 @@ steps_per_day <- data %>%
 
 Let's take a look at a histogram of the total steps taken per day.
 
-```{r}
+
+```r
 hist(steps_per_day$steps, col="cyan", xlab="Steps", main="Histogram of Steps Per Day")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
 And finally, let's calculate the mean and median of the total number of steps taken per day.
 
-```{r}
+
+```r
 mean(steps_per_day$steps)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(steps_per_day$steps)
+```
+
+```
+## [1] 10395
 ```
 
 
@@ -54,7 +69,8 @@ median(steps_per_day$steps)
 
 Similar to above, we use the `dplyr` package to calculate the average number of steps taken in each time interval across all days.
 
-```{r summarise sum of steps per interval}
+
+```r
 steps_per_interval <- data %>%
         group_by(interval) %>%
         summarise(steps = mean(steps, na.rm = TRUE))
@@ -62,20 +78,29 @@ steps_per_interval <- data %>%
 
 Following this, let's create a time series plot of this data.
 
-```{r}
+
+```r
 with(steps_per_interval, plot(interval, steps, col = "blue", type = "l", xlab = "Interval", ylab= "Steps", main = "Time Series of mean steps taken over the course of a day"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 Which time interval, averaged across all days, contains the maximum number of steps? Let's find out. We use the `which.max` function to find the index at which the maximum value can be found, then use this index to find the corresponding interval.
 
-```{r}
+
+```r
 max_int <- steps_per_interval$interval[which.max(steps_per_interval$steps)]
 ```
 
 So the interval is...
 
-```{r}
+
+```r
 paste(max_int, max_int + 5, sep = " - ")
+```
+
+```
+## [1] "835 - 840"
 ```
 
 
@@ -83,20 +108,27 @@ paste(max_int, max_int + 5, sep = " - ")
 
 There are a lot of missing (`NA`) values for the steps variable. But how many? Let's sum the `NA` values.
 
-```{r}
+
+```r
 sum(is.na(data$steps))
+```
+
+```
+## [1] 2304
 ```
 
 We fill in these missing values by simply setting them to 0.
 
-```{r}
+
+```r
 na_removed <- data %>%
         mutate(steps = replace(steps, is.na(steps), 0))
 ```
 
 Once again, let's take a look at a histogram of the total steps taken per day with these missing values set to 0. First we create the summarised data set like we did before.
 
-```{r summarise sum of steps per day with NA removed}
+
+```r
 steps_per_day <- na_removed %>%
         group_by(date) %>%
         summarise(steps = sum(steps, na.rm = TRUE))
@@ -104,15 +136,30 @@ steps_per_day <- na_removed %>%
 
 And we plot a histogram like we did before.
 
-```{r}
+
+```r
 hist(steps_per_day$steps, col="cyan", xlab="Steps", main="Histogram of Steps Per Day with missing values set to 0")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
 And finally, let's calculate the mean and median of the total number of steps taken per day.
 
-```{r}
+
+```r
 mean(steps_per_day$steps)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(steps_per_day$steps)
+```
+
+```
+## [1] 10395
 ```
 
 We can see there has been no change to the Histogram or the mean and median values due to us setting these missing values to 0.
@@ -121,15 +168,24 @@ We can see there has been no change to the Histogram or the mean and median valu
 
 First, we create a new `type_of_day` variable which indicates whether the day is in the week or on the weekend, then summarise the mean number of steps taken in each interval, split by weekend and weekday.
 
-```{r}
+
+```r
 weekdays <- na_removed %>%
         mutate(type_of_day = ifelse(weekdays(date) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")) %>%
         group_by(interval,type_of_day) %>%
         summarise(steps = mean(steps))
 ```
 
+```
+## `summarise()` has grouped output by 'interval'. You can override using the `.groups` argument.
+```
+
 Now, we create a time series plot of this data, splitting the data between weekdays and weekends. Here, we use the `lattice` plotting system. We see there is quite an obvious difference in activity pattern depending on whether the day is in the week or on the weekend.
 
-```{r}
+
+```r
 library(lattice)
 xyplot(steps ~ interval | type_of_day, data = weekdays, type = "l", layout=c(1,2))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
